@@ -1,43 +1,46 @@
-import streamlit as st
-import pandas as pd
+import streamlit as st  # Streamlit library for creating web apps
+import pandas as pd  # Pandas library for data manipulation
 
-# Load the dataset
-@st.cache
-def load_data():
+# Function to load car dataset
+@st.cache  # Streamlit's caching mechanism to load data only once
+def fetch_car_dataset():
+    # Load and return car data from a CSV file
     return pd.read_csv("car_data.csv")
 
-data = load_data()
+# Fetching the car data using the defined function
+car_dataset = fetch_car_dataset()
 
-# Sidebar
-st.sidebar.header("Filter Options")
+# Creating a sidebar for user inputs
+st.sidebar.header("Customize Your Search")
 
-# Text box to input car_name
-car_name = st.sidebar.text_input("Enter Car Name (Optional)")
+# User input for filtering by car name
+input_car_name = st.sidebar.text_input("Type Car Name (Optional)")
 
-# Multiselect to choose Transmission type
-transmission_options = ['Manual', 'Automatic']
-selected_transmission = st.sidebar.multiselect("Choose Transmission Type", transmission_options, default=transmission_options)
+# User choice for car transmission type
+transmission_choices = ['Manual', 'Automatic']
+chosen_transmission = st.sidebar.multiselect("Select Transmission Type", transmission_choices, default=transmission_choices)
 
-# Slider to choose a range of selling_price
-selling_price_range = st.sidebar.slider("Select Selling Price Range", min_value=0, max_value=30, value=(0, 20))
+# User selection for car selling price range using a slider
+price_range = st.sidebar.slider("Set Selling Price Range", min_value=0, max_value=30, value=(0, 20))
 
-# Slider to choose a range of year
-year_range = st.sidebar.slider("Select Year Range", min_value=2000, max_value=2024, value=(2000, 2024))
+# User selection for car manufacturing year range
+year_range = st.sidebar.slider("Set Manufacturing Year Range", min_value=2000, max_value=2024, value=(2000, 2024))
 
-# Button to apply filters
-if st.sidebar.button("Submit"):
-    filtered_data = data.copy()
+# Button to filter the dataset based on user inputs
+if st.sidebar.button("Apply Filters"):
+    # Making a copy of the dataset for filtering
+    dataset_filtered = car_dataset.copy()
 
-    # Apply filters
-    if car_name:
-        filtered_data = filtered_data[filtered_data['Car_Name'].str.contains(car_name, case=False)]
+    # Filtering dataset based on user inputs
+    if input_car_name:
+        dataset_filtered = dataset_filtered[dataset_filtered['Car_Name'].str.contains(input_car_name, case=False)]
     
-    filtered_data = filtered_data[filtered_data['Transmission'].isin(selected_transmission)]
-    filtered_data = filtered_data[(filtered_data['Selling_Price'] >= selling_price_range[0]) & (filtered_data['Selling_Price'] <= selling_price_range[1])]
-    filtered_data = filtered_data[(filtered_data['Year'] >= year_range[0]) & (filtered_data['Year'] <= year_range[1])]
+    dataset_filtered = dataset_filtered[dataset_filtered['Transmission'].isin(chosen_transmission)]
+    dataset_filtered = dataset_filtered[(dataset_filtered['Selling_Price'] >= price_range[0]) & (dataset_filtered['Selling_Price'] <= price_range[1])]
+    dataset_filtered = dataset_filtered[(dataset_filtered['Year'] >= year_range[0]) & (dataset_filtered['Year'] <= year_range[1])]
 
-    # Show filtered data
-    st.write(filtered_data)
+    # Displaying the filtered dataset
+    st.write(dataset_filtered)
 else:
-    # Show original data
-    st.write(data)
+    # Displaying the original dataset if no filters are applied
+    st.write(car_dataset)
