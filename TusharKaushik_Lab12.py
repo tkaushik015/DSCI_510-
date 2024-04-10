@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[2]:
-
-
 import streamlit as st
 import pandas as pd
 
@@ -47,10 +41,3 @@ if st.sidebar.button("Submit"):
 else:
     # Show original data
     st.write(data)
-
-
-# In[ ]:
-
-
-`
-
